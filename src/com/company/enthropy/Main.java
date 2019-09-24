@@ -13,6 +13,7 @@ public class Main {
         String fileName = in.nextLine();
         EnthropyCounter counter = new EnthropyCounter(new File(fileName));
         NumberFormat nf = new DecimalFormat("#0.0000");
-        System.out.println("Enthropy is " + counter.countEnthropy() + " bits");
+        System.out.println("Enthropy is " + nf.format(counter.countEnthropy()) + " bits");
+        System.out.println("Pair enthropy is " + nf.format(counter.countPairEnthropy()) + " bits");
     }
 }
