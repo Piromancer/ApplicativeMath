@@ -3,7 +3,10 @@ package com.company.enthropy;
 import com.company.util.Pair;
 
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 public class EnthropyCounter {
 
@@ -12,6 +15,7 @@ public class EnthropyCounter {
     private static HashMap<Pair<Character, Character>, Long> collectedPairData = new HashMap<>();
     private static final StringBuilder POSSIBLE_SIMBOLS = new StringBuilder();
     private static final String OTHER_SYMBOLS = ".!?;:-\'\"()\\/{}#@";
+    private static long lastCountedSymbols;
 
     static {
         for (char i = 'a'; i <= 'z'; i++) {
@@ -29,6 +33,19 @@ public class EnthropyCounter {
                 collectedPairData.put(new Pair<>(temp.charAt(i), temp.charAt(j)), 0L);
             }
         }
+    }
+
+    public String getCollectedDataTable(){
+        NumberFormat nf = new DecimalFormat("#0.0000");
+        TreeMap <Character, Long> tree = new TreeMap<Character, Long>(collectedData);
+        TreeMap <Character, Double> probabilityTree = new TreeMap<>();
+        tree.forEach((k,v) -> probabilityTree.put(k, (double) v/lastCountedSymbols));
+        probabilityTree.forEach((k,v) -> probabilityTree.compute(k, (key,value) -> Double.parseDouble(nf.format(value).replace(',', '.'))));
+        String res = "Probability = " + probabilityTree.toString()+'\n';
+        probabilityTree.forEach((k,v) -> probabilityTree.compute(k, (key,value) -> (value == 0) ? value : -value * Math.log(value) / Math.log(2)));
+        probabilityTree.forEach((k,v) -> probabilityTree.compute(k, (key,value) -> Double.parseDouble(nf.format(value).replace(',', '.'))));
+        res += "Enthropy = " + probabilityTree.toString();
+        return res.replace(',', '\n');
     }
 
     public EnthropyCounter(File input) {
@@ -68,6 +85,7 @@ public class EnthropyCounter {
                 double p = (double) i / totalSymbols;
                 total += p * Math.log(p) / Math.log(2);
             }
+            lastCountedSymbols = totalSymbols;
             return -total;
         } catch (IOException ioe) {
             ioe.printStackTrace();

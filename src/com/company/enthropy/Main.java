@@ -15,5 +15,7 @@ public class Main {
         NumberFormat nf = new DecimalFormat("#0.0000");
         System.out.println("Enthropy is " + nf.format(counter.countEnthropy()) + " bits");
         System.out.println("Pair enthropy is " + nf.format(counter.countPairEnthropy()) + " bits");
+
+        System.out.println(counter.getCollectedDataTable());
     }
 }
